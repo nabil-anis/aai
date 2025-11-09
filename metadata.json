@@ -1,0 +1,5 @@
+{
+  "name": "ASAP AI",
+  "description": "An AI-powered assistant for academic evaluation. It judges university-level computer science projects like a professor, questions like a viva panel, and adapts like a mentor, generating comprehensive reports with scores, feedback, and viva questions.",
+  "requestFramePermissions": []
+}
