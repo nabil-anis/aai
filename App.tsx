@@ -147,11 +147,11 @@ const App: React.FC = () => {
                 />
             )}
             
-            <main className="lg:pl-[420px] w-full relative">
+            <main className={`w-full relative transition-all duration-500 ease-in-out ${isConfigPanelOpen ? 'lg:pl-[420px]' : 'lg:pl-0'}`}>
                 {!isConfigPanelOpen && (
                     <button 
                         onClick={() => setIsConfigPanelOpen(true)}
-                        className="fixed top-4 left-4 z-20 p-2 bg-[--background-secondary]/80 glass-backdrop rounded-full text-[--foreground-secondary] hover:text-[--accent] transition-all animate-fade-in lg:hidden"
+                        className="fixed top-4 left-4 z-50 p-2 bg-[--background-secondary]/80 glass-backdrop rounded-full text-[--foreground-secondary] hover:text-[--accent] transition-all animate-fade-in"
                         aria-label="Open configuration panel"
                     >
                         <PanelOpenIcon className="w-6 h-6" />
