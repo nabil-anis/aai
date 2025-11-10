@@ -1,7 +1,6 @@
-
 import React from 'react';
 import { DisciplineKey } from './types';
-import { CodeIcon, FlaskConicalIcon, GraduationCapIcon, LandmarkIcon, LeafIcon, PaletteIcon, ScaleIcon, AtomIcon, PillIcon, BookOpenIcon, BarChartIcon } from './components/icons';
+import { CodeIcon, GraduationCapIcon, LandmarkIcon, LeafIcon, PaletteIcon, ScaleIcon, AtomIcon, PillIcon, BookOpenIcon, BarChartIcon } from './components/icons';
 
 export const CONFIG_STORAGE_KEY = 'asap-ai-config';
 export const LOCAL_STORAGE_KEY = 'asap-ai-reports';

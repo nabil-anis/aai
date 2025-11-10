@@ -9,7 +9,7 @@ if (!API_KEY) {
 
 const ai = new GoogleGenAI({ apiKey: API_KEY });
 
-const responseSchema = {
+const baseResponseSchema = {
     type: Type.OBJECT,
     properties: {
         projectTitle: { type: Type.STRING },
@@ -126,19 +126,24 @@ Content (Base64 Encoded): ${file.content}
     If 'checkOriginality' was false, the 'originalityReport' key should be omitted from the final JSON.
     `;
 
+    const getFinalSchema = (checkOriginality: boolean) => {
+        if (checkOriginality) {
+            return baseResponseSchema;
+        }
+        const { originalityReport, ...restProperties } = baseResponseSchema.properties;
+        return {
+            ...baseResponseSchema,
+            properties: restProperties,
+        };
+    };
+
     try {
         const response = await ai.models.generateContent({
             model: model,
             contents: prompt,
             config: {
                 responseMimeType: 'application/json',
-                responseSchema: config.checkOriginality ? responseSchema : {
-                    ...responseSchema,
-                    properties: {
-                        ...responseSchema.properties,
-                        originalityReport: undefined
-                    }
-                },
+                responseSchema: getFinalSchema(config.checkOriginality),
                 temperature: 0.2,
             }
         });

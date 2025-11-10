@@ -8,7 +8,6 @@ import ErrorMessage from './components/ErrorMessage';
 import ReportHistory from './components/ReportHistory';
 import AboutModal from './components/AboutModal';
 import * as geminiService from './services/geminiService';
-import * as apiService from './services/apiService';
 import { CONFIG_STORAGE_KEY, LOCAL_STORAGE_KEY, DISCIPLINES } from './constants';
 import { useTheme } from './hooks/useTheme';
 import { PanelOpenIcon } from './components/icons';
@@ -42,20 +41,10 @@ const App: React.FC = () => {
     }, [config]);
     
     useEffect(() => {
-        const loadReports = async () => {
-            try {
-                const reportsFromServer = await apiService.getReports();
-                setSavedReports(reportsFromServer);
-                localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(reportsFromServer));
-            } catch (e) {
-                console.warn("Could not fetch reports from server, falling back to local storage.", e);
-                const localReports = localStorage.getItem(LOCAL_STORAGE_KEY);
-                if (localReports) {
-                    setSavedReports(JSON.parse(localReports));
-                }
-            }
-        };
-        loadReports();
+        const localReports = localStorage.getItem(LOCAL_STORAGE_KEY);
+        if (localReports) {
+            setSavedReports(JSON.parse(localReports));
+        }
     }, []);
 
     const handleAnalysisSubmit = useCallback(async () => {
@@ -84,13 +73,6 @@ const App: React.FC = () => {
             const updatedReports = [newReport, ...savedReports];
             setSavedReports(updatedReports);
             localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(updatedReports));
-
-            try {
-                await apiService.saveReport(newReport);
-            } catch (e) {
-                console.warn("Failed to save report to server. It is saved locally.", e);
-            }
-
         } catch (e) {
             console.error(e);
             setError(e instanceof Error ? e.message : 'An unknown error occurred during analysis.');
@@ -126,13 +108,11 @@ const App: React.FC = () => {
         const updatedReports = savedReports.filter(r => r.id !== reportId);
         setSavedReports(updatedReports);
         localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(updatedReports));
-        apiService.deleteReport(reportId).catch(e => console.warn("Failed to delete report from server.", e));
     };
 
     const handleClearHistory = () => {
         setSavedReports([]);
         localStorage.removeItem(LOCAL_STORAGE_KEY);
-        // This would ideally be a bulk delete API call
     };
 
     const renderMainContent = () => {
@@ -161,17 +141,17 @@ const App: React.FC = () => {
 
             {isConfigPanelOpen && (
                 <div
-                    className="fixed inset-0 z-30 glass-backdrop"
+                    className="fixed inset-0 z-30 glass-backdrop lg:hidden"
                     onClick={() => setIsConfigPanelOpen(false)}
                     aria-hidden="true"
                 />
             )}
             
-            <main className="w-full relative">
+            <main className="lg:pl-[420px] w-full relative">
                 {!isConfigPanelOpen && (
                     <button 
                         onClick={() => setIsConfigPanelOpen(true)}
-                        className="fixed top-4 left-4 z-20 p-2 bg-[--background-secondary]/80 glass-backdrop rounded-full text-[--foreground-secondary] hover:text-[--accent] transition-all animate-fade-in"
+                        className="fixed top-4 left-4 z-20 p-2 bg-[--background-secondary]/80 glass-backdrop rounded-full text-[--foreground-secondary] hover:text-[--accent] transition-all animate-fade-in lg:hidden"
                         aria-label="Open configuration panel"
                     >
                         <PanelOpenIcon className="w-6 h-6" />
